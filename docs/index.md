@@ -1,37 +1,47 @@
-## Welcome to GitHub Pages
+Building a game in Ruby while reading 'Design Patterns: Elements of Reusable Object-Oriented Software'.
 
-You can use the [editor on GitHub](https://github.com/jrmhaig/OO_Game/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+## Requirements
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+* Ruby 3.1
 
-### Markdown
+## Abstract classes
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+The purpose of an abstract class is to define the common interface for its subclasses, enforcing the
+[Liskov substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle). This cannot be enforced in Ruby in this way as, for example, there is
+no way to prevent a subclass from changing the argument list of a particular method. To serve the same purpose I am using shared examples in the unit tests. For
+instance, the tests for the framework factories each include;
 
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```ruby
+  it_behaves_like 'a framework factory'
 ```
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+and the `a framework factory` shared examples tests that all the correct methods are present and that they take the correct arguments.
 
-### Jekyll Themes
+## Creational Patterns
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/jrmhaig/OO_Game/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+### Abstract Factory
 
-### Support or Contact
+The Abstract Factory pattern is used to allow either [`gosu`](https://rubygems.org/gems/gosu) or [`ruby2d`](https://rubygems.org/gems/ruby2d) to be used as the
+graphical framework. The concrete factories for each graphics library needs to provide the same methods for creating elements such as the main window and
+sprites.
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Each of the elements created by the factory must match a common interface so, for example, the Gosu window and Ruby2D window elements must match the interface
+defined by the abstract window element (defined in the `a window` shared examples in the unit tests).
+
+#### Framework factory interface
+
+Set up a game window with width 800 pixels, height 1000 pixels and title 'Game title';
+
+```ruby
+window = factory.window(width: 800, height: 1000, title: 'Game title')
+```
+
+This will return a `Frameworks::GosuElements::Window` or `Frameworks::Ruby2DElements::Window` instance, depending on the factory used.
+
+#### Window element interface
+
+Display the window;
+
+```ruby
+window.show
+```
